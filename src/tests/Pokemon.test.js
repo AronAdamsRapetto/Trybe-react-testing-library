@@ -65,7 +65,6 @@ describe('Testes do componente Pokemon.js', () => {
     history.push('/');
 
     const favoritesById = readFavoritePokemonIds();
-    console.log(favoritesById);
 
     pokemons.forEach(({ id, name }) => {
       if (favoritesById.some((idFavorite) => id === idFavorite)) {

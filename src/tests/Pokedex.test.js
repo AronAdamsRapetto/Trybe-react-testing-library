@@ -29,14 +29,31 @@ describe('Testes da Pokedex page', () => {
 
   it('Verifica se Pokédex tem todos os botões de filtro na tela', () => {
     renderwithRouter(<App />);
-    const allBtnTypes = screen.getAllByTestId('pokemon-type-button');
+    const btnTypes = screen.getAllByTestId('pokemon-type-button');
     const allTypes = pokemons.reduce((types, { type }) => [...types, type], [])
       .filter((type, index, self) => self.indexOf(type) === index);
 
     allTypes.forEach((type, index) => {
       expect(screen.getByRole('button', { name: /all/i })).toBeInTheDocument();
-      expect(allBtnTypes[index]).toBeInTheDocument();
-      expect(allBtnTypes[index]).toHaveTextContent(type);
+      expect(btnTypes[index]).toBeInTheDocument();
+      expect(btnTypes[index]).toHaveTextContent(type);
+    });
+  });
+
+  it('Verfica se os pokemons são renderizados conforme o filtro', () => {
+    renderwithRouter(<App />);
+    const btnTypes = screen.getAllByTestId('pokemon-type-button');
+
+    btnTypes.forEach((btnType) => {
+      userEvent.click(btnType);
+      pokemons.forEach(({ type, name }) => {
+        if (type === btnType.textContent) {
+          expect(screen.getByText(name)).toBeInTheDocument();
+          userEvent.click(screen.getByTestId(/next-pokemon/i));
+        } else {
+          expect(screen.queryByText(name)).not.toBeInTheDocument();
+        }
+      });
     });
   });
 
